@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quiz – Objets communicants : cinq cas pratiques</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+:root{--bg:#F5F8FA;--ink:#14263d;--muted:#516178;--card:#fff;--line:#d3dce6;--acc:#0B6E7F;--on:#fff;--ok:#1a7f45;--ko:#b3261e;--hl:#FFD54A;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101823;--ink:#e6edf6;--muted:#9fb0c6;--card:#182333;--line:#2b3b52;--acc:#4cc3d3;--on:#0b1620;--ok:#5fd08a;--ko:#ff8a80}}
+:root[data-theme="dark"]{--bg:#101823;--ink:#e6edf6;--muted:#9fb0c6;--card:#182333;--line:#2b3b52;--acc:#4cc3d3;--on:#0b1620;--ok:#5fd08a;--ko:#ff8a80}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,sans-serif;line-height:1.5}
+main{max-width:680px;margin:0 auto;padding:24px 16px 60px}
+h1{font-size:clamp(1.5rem,4.5vw,2rem);margin:0 0 4px;line-height:1.2}
+.sub{color:var(--muted);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:18px}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-bottom:14px}
+.bar i{display:block;height:100%;background:var(--acc);width:0;transition:width .3s}
+.n{color:var(--muted);font-size:.9rem;margin:0 0 6px}
+.case{border-left:5px solid var(--hl);background:var(--bg);padding:10px 12px;margin:0 0 14px;border-radius:4px}
+.case b{display:block;margin-bottom:2px}
+.q{font-size:1.15rem;font-weight:700;margin:0 0 12px}
+.opts{display:grid;gap:8px}
+button{font:inherit;cursor:pointer}
+.opts button{text-align:left;border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;padding:10px 12px}
+.opts button:hover:not(:disabled){border-color:var(--acc)}
+.opts button.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--card))}
+.opts button.ko{border-color:var(--ko);background:color-mix(in srgb,var(--ko) 15%,var(--card))}
+.opts button:disabled{cursor:default}
+.fb{margin:12px 0 0;padding:10px 12px;border-left:5px solid var(--acc);background:var(--bg)}
+.main{background:var(--acc);color:var(--on);border:0;border-radius:6px;padding:10px 18px;font-weight:700;margin-top:14px}
+button:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+.big{font-size:2.2rem;font-weight:700;color:var(--acc);margin:0}
+ul.rev{padding-left:1.1rem}ul.rev li{margin:4px 0}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<h1>Objets communicants : cinq cas pratiques</h1>
+<p class="sub">9ème année de base – alarme, arrosage, serrure, lampadaire, bracelet connecté (20 questions, 1 point chacune)</p>
+<div class="card" id="app"></div>
+</main>
+<script>
+var C=[
+{t:"Cas 1 – Le système d'alarme",s:"Une alarme de maison utilise un capteur de mouvement. Quand quelqu'un entre alors que la maison est vide, la carte ESP32 déclenche une sirène (buzzer) et envoie une notification au smartphone via Internet. L'alarme est alimentée par le secteur, avec une batterie de secours.",q:[
+{p:"Quel est le capteur de ce système ?",o:["La sirène (buzzer)","La carte ESP32","Le capteur de mouvement","La batterie de secours"],c:2,e:"Le capteur observe et fournit l'information : ici, il détecte la présence d'une personne."},
+{p:"Quel est l'actionneur ?",o:["Le capteur de mouvement","La sirène (buzzer)","Le smartphone","La batterie de secours"],c:1,e:"L'actionneur reçoit un ordre de la carte et produit une action physique : ici, un son."},
+{p:"L'alarme envoie une notification via Internet. De quelle famille s'agit-il ?",o:["Objet communicant non connecté","Objet communicant connecté","Objet non communicant"],c:1,e:"Elle échange via un réseau avec une application distante : c'est un objet communicant connecté."},
+{p:"Une coupure d'électricité éteint l'alarme. Quel inconvénient du cours cela illustre-t-il ?",o:["Le coût élevé","La dépendance à l'énergie et au réseau","La collecte de données personnelles"],c:1,e:"C'est la dépendance à l'énergie et au réseau, d'où l'intérêt d'une batterie de secours."}]},
+{t:"Cas 2 – L'arrosage automatique",s:"Un jardin est équipé d'un capteur d'humidité du sol, d'une carte Arduino Uno et d'une électrovanne qui commande l'eau. Le jardin est à 3 km de la maison, sans réseau Internet fixe. Un panneau solaire alimente le système.",q:[
+{p:"Le sol est trop sec. Qui décide d'ouvrir l'électrovanne ?",o:["Le capteur d'humidité","L'électrovanne","Le panneau solaire","La carte Arduino Uno"],c:3,e:"La carte programmable analyse la mesure, exécute le programme et envoie l'ordre à l'actionneur."},
+{p:"Pour ne pas arroser quand il pleut, quel capteur faut-il ajouter ?",o:["Un capteur de pluie","Un capteur de flamme","Un buzzer","Un servomoteur"],c:0,e:"Un capteur de pluie fournit une nouvelle information d'entrée à la carte."},
+{p:"Le jardin est loin, sans réseau fixe, avec peu d'énergie. Quelle technologie sans fil convient le mieux ?",o:["Infrarouge","Bluetooth","LoRa","Câble USB"],c:2,e:"LoRa a une longue portée. Le Bluetooth et l'infrarouge sont à courte portée, et un câble de 3 km n'est pas adapté."},
+{p:"Quel avantage du cours illustre le mieux ce système ?",o:["Le coût élevé","Gagner du temps et surveiller à distance","Les risques de piratage","Les pannes et l'obsolescence"],c:1,e:"L'arrosage se fait sans intervention et le jardinier peut surveiller à distance."}]},
+{t:"Cas 3 – La serrure automatique",s:"Une serrure intelligente s'ouvre avec un code sur un clavier ou avec une application du téléphone en Bluetooth. Une carte micro:bit commande un servomoteur qui déplace le verrou. Elle fonctionne avec des piles.",q:[
+{p:"Quel composant est l'actionneur ?",o:["Le clavier à code","La carte micro:bit","Les piles","Le servomoteur"],c:3,e:"Le servomoteur reçoit l'ordre d'ouvrir et produit le mouvement du verrou."},
+{p:"Le téléphone ouvre la porte en Bluetooth, à 2 mètres, sans passer par Internet. De quelle famille s'agit-il ?",o:["Objet communicant connecté","Objet communicant non connecté","Objet non communicant"],c:1,e:"L'échange est local, avec un terminal proche et sans accès direct à Internet."},
+{p:"Pour ouvrir la porte à distance depuis son travail, que faut-il ?",o:["Changer les piles","Un accès à Internet pour que la serrure devienne connectée","Remplacer le servomoteur par une LED","Utiliser l'infrarouge"],c:1,e:"Il faut un réseau (Internet) pour échanger avec une application distante."},
+{p:"Quelle mesure réduit le risque de piratage de la serrure ?",o:["Garder le code d'usine","Choisir un code long et personnel, et mettre l'application à jour","Partager le code avec tous les voisins","Retirer les piles"],c:1,e:"Un code solide et des mises à jour limitent le piratage. Prévoir une clé de secours aide aussi en cas de panne de pile."}]},
+{t:"Cas 4 – Le lampadaire intelligent",s:"Un lampadaire de ville possède un capteur de luminosité et un capteur de mouvement. Une carte ESP32 allume la lampe LED seulement la nuit, quand quelqu'un passe. Le lampadaire envoie son état de fonctionnement au service de la mairie via la 4G/5G. Un panneau solaire l'alimente.",q:[
+{p:"Quels composants sont des capteurs ?",o:["Le capteur de luminosité et le capteur de mouvement","La LED et le panneau solaire","La carte ESP32 et la LED","Le panneau solaire et le capteur de mouvement"],c:0,e:"Les capteurs observent : ici la lumière du jour et la présence d'une personne. La LED est l'actionneur, l'ESP32 est la carte, le panneau est la source d'énergie."},
+{p:"Allumer la lampe seulement quand quelqu'un passe illustre quel avantage du cours ?",o:["Faciliter la vie","Renforcer la sécurité","Surveiller à distance","Économiser l'énergie"],c:3,e:"La lampe ne consomme que lorsque c'est utile : c'est l'avantage « économiser l'énergie »."},
+{p:"La 4G/5G est une technologie de communication :",o:["Filaire, par câble","À longue portée, par réseau","À très courte portée, comme l'infrarouge","Réservée aux objets non connectés"],c:1,e:"La 4G/5G, comme LoRa et Sigfox, est une technologie à longue portée qui donne accès au réseau."},
+{p:"Après quelques années, le lampadaire tombe en panne et ses pièces ne se trouvent plus. Quel inconvénient du cours est illustré ?",o:["Le coût élevé","Les risques de piratage","Les pannes et l'obsolescence","La collecte de données personnelles"],c:2,e:"Les objets communicants peuvent tomber en panne ou devenir obsolètes (objet usé)."}]},
+{t:"Cas 5 – Le bracelet connecté (santé)",s:"Un bracelet mesure le rythme cardiaque. Un microcontrôleur compare la mesure à un seuil et fait vibrer le bracelet si le rythme est trop élevé. Les données sont envoyées au smartphone en Bluetooth, sans accès direct à Internet. Le bracelet fonctionne avec une batterie rechargeable.",q:[
+{p:"Quel est l'actionneur de ce bracelet ?",o:["Le capteur de rythme cardiaque","Le moteur de vibration (vibreur)","La batterie","Le smartphone"],c:1,e:"L'actionneur produit une action physique : ici, la vibration qui prévient l'utilisateur."},
+{p:"À quelle famille appartient ce bracelet ?",o:["Objet communicant non connecté","Objet communicant connecté","Objet non communicant"],c:0,e:"L'échange est local, avec un smartphone proche, sans accès direct à Internet."},
+{p:"Quand le rythme dépasse le seuil, que fait la carte programmable ?",o:["Elle mesure le rythme cardiaque","Elle recharge la batterie","Elle produit elle-même la vibration","Elle analyse la mesure, décide et envoie l'ordre au vibreur"],c:3,e:"La carte reçoit l'information du capteur, exécute le programme, prend une décision et commande l'actionneur."},
+{p:"Quel risque est le plus lié à ce type d'objet de santé ?",o:["Il consomme trop d'énergie solaire","Il coûte toujours moins cher","La collecte et le piratage de données personnelles","Il ne peut pas utiliser le Bluetooth"],c:2,e:"Les données de santé sont des données personnelles : leur collecte et leur piratage sont des inconvénients du cours."}]}
+];
+var Q=[];C.forEach(function(c,ci){c.q.forEach(function(q){q.ci=ci;Q.push(q)})});
+var app=document.getElementById("app"),i=0,sc=[0,0,0,0,0],wrong=[];
+function esc(s){return String(s).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
+function show(){
+ if(i>=Q.length)return end();
+ var q=Q[i],cs=C[q.ci],done=false;
+ app.innerHTML='<div class="bar"><i style="width:'+(i/Q.length*100)+'%"></i></div><p class="n">Question '+(i+1)+' sur '+Q.length+'</p><div class="case"><b>'+esc(cs.t)+'</b>'+esc(cs.s)+'</div><p class="q">'+esc(q.p)+'</p><div class="opts" role="group"></div><div id="out" aria-live="polite"></div>';
+ var box=app.querySelector(".opts");
+ q.o.forEach(function(t,k){var b=document.createElement("button");b.type="button";b.textContent=t;
+  b.onclick=function(){if(done)return;done=true;
+   [].forEach.call(box.children,function(x,j){x.disabled=true;if(j===q.c)x.classList.add("ok")});
+   var g=k===q.c;if(g)sc[q.ci]++;else{b.classList.add("ko");wrong.push(i)}
+   var o=document.getElementById("out");
+   o.innerHTML='<p class="fb"><strong>'+(g?"Bravo !":"Pas tout à fait.")+'</strong> '+esc(q.e)+'</p><button class="main" type="button">'+(i===Q.length-1?"Voir mon résultat":"Question suivante")+'</button>';
+   var nb=o.querySelector(".main");nb.onclick=function(){i++;show();window.scrollTo(0,0)};nb.focus()};
+  box.appendChild(b)});
+}
+function end(){
+ var t=sc.reduce(function(a,b){return a+b},0),msg=t>=16?"Excellent, tu maîtrises le cours.":t>=11?"Bien, relis les points ci-dessous.":"À revoir : reprends le cours puis refais le quiz.";
+ app.innerHTML='<div class="bar"><i style="width:100%"></i></div><p class="n">Résultat</p><p class="big">'+t+' / '+Q.length+'</p><p>'+msg+'</p><ul class="rev">'+C.map(function(c,k){return '<li>'+esc(c.t)+' : '+sc[k]+' / 4</li>'}).join("")+'</ul>'+(wrong.length?'<p><strong>À revoir :</strong></p><ul class="rev">'+wrong.map(function(k){return '<li>'+esc(Q[k].p)+' → '+esc(Q[k].o[Q[k].c])+'</li>'}).join("")+'</ul>':'')+'<button class="main" type="button">Recommencer</button>';
+ app.querySelector(".main").onclick=function(){i=0;sc=[0,0,0,0,0];wrong=[];show()};
+}
+show();
+</script>
+</body>
+</html>
